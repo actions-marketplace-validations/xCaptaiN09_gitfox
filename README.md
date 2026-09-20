@@ -11,10 +11,8 @@
 Your code never leaves the runner. No API keys. No cloud LLM. Free forever.
 
 <div align="center">
-  <a href="https://github.com/xCaptaiN09/gitfox/raw/main/.github/assets/demo.mp4">
-    <img src=".github/assets/demo-poster.jpg" alt="Gitfox 18-Second Demo Overview" width="720">
-  </a>
-  <p><sub>▶️ <em>Click image to watch the 18-second overview video (with audio)</em></sub></p>
+  <video src="https://github.com/user-attachments/assets/13b3e9c4-c586-4c69-a1b8-624c993c8f7d" controls="controls" width="720"></video>
+  <p><sub>▶️ <em>Watch the 18-second overview — your code never leaves the runner · <a href="https://github.com/xCaptaiN09/gitfox/blob/main/.github/assets/demo.mp4">Open full video</a></em></sub></p>
 </div>
 
 ## Features
