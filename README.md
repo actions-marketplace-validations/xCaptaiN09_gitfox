@@ -10,6 +10,15 @@
 
 Your code never leaves the runner. No API keys. No cloud LLM. Free forever.
 
+<div align="center">
+  <video src=".github/assets/demo.mp4" poster=".github/assets/demo-poster.jpg" controls width="720">
+    <a href=".github/assets/demo.mp4">
+      <img src=".github/assets/demo-poster.jpg" alt="Gitfox 18-Second Demo Overview" width="720">
+    </a>
+  </video>
+  <p><sub>▶️ <em>Watch the 18-second overview — your code never leaves the runner</em></sub></p>
+</div>
+
 ## Features
 
 - **PR review** — detects bugs, security issues, and bad practices in pull request diffs, with severity labels:
