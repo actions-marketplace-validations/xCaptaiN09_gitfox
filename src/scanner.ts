@@ -148,6 +148,10 @@ export async function scanRepository(
     try {
       if (await github.alreadyRepliedToPr(ref, number)) {
         stats.prsSkipped += 1;
+        if (config.progressReactions) {
+          // Sweep stale 🚀 left over from interrupted runs of older versions.
+          await github.removeMyReaction(ref, number, 'rocket').catch(() => undefined);
+        }
         continue;
       }
       const pr = await github.getPullRequest(ref, number);
@@ -167,6 +171,10 @@ export async function scanRepository(
     try {
       if (await github.alreadyRepliedToIssue(ref, number)) {
         stats.issuesSkipped += 1;
+        if (config.progressReactions) {
+          // Sweep stale 🚀 left over from interrupted runs of older versions.
+          await github.removeMyReaction(ref, number, 'rocket').catch(() => undefined);
+        }
         continue;
       }
       const issue = await github.getIssue(ref, number);
@@ -283,6 +291,24 @@ export async function reviewAndPost(
   pr: PullRequestContext,
   headSha?: string
 ): Promise<void> {
+  try {
+    await runReview(github, ollama, config, ref, pr, headSha);
+  } catch (error) {
+    if (config.progressReactions) {
+      await github.removeMyReaction(ref, pr.number, 'rocket');
+    }
+    throw error;
+  }
+}
+
+async function runReview(
+  github: GitHubClient,
+  ollama: OllamaClient,
+  config: GitfoxConfig,
+  ref: RepoRef,
+  pr: PullRequestContext,
+  headSha?: string
+): Promise<void> {
   if (config.progressReactions) {
     await github.addReaction(ref, pr.number, 'rocket').catch(() => undefined);
   }
@@ -372,7 +398,9 @@ export async function reviewAndPost(
     }
   }
 
-  if (config.progressReactions) {
+  if (posted && config.progressReactions) {
+    // Clear the transient "working" marker; the 👍 alone signals completion.
+    await github.removeMyReaction(ref, pr.number, 'rocket').catch(() => undefined);
     await github.addReaction(ref, pr.number, '+1').catch(() => undefined);
   }
 }
@@ -402,6 +430,23 @@ export function renderInlineComment(finding: Finding, postSuggestions: boolean):
 }
 
 export async function triageAndPost(
+  github: GitHubClient,
+  ollama: OllamaClient,
+  config: GitfoxConfig,
+  ref: RepoRef,
+  issue: IssueContext
+): Promise<void> {
+  try {
+    await runTriage(github, ollama, config, ref, issue);
+  } catch (error) {
+    if (config.progressReactions) {
+      await github.removeMyReaction(ref, issue.number, 'rocket');
+    }
+    throw error;
+  }
+}
+
+async function runTriage(
   github: GitHubClient,
   ollama: OllamaClient,
   config: GitfoxConfig,
@@ -442,6 +487,8 @@ export async function triageAndPost(
   }
 
   if (config.progressReactions) {
+    // Clear the transient "working" marker; the 👍 alone signals completion.
+    await github.removeMyReaction(ref, issue.number, 'rocket').catch(() => undefined);
     await github.addReaction(ref, issue.number, '+1').catch(() => undefined);
   }
 }

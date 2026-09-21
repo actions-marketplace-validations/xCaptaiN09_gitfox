@@ -4,11 +4,16 @@
 
 # 🦊 Gitfox
 
-![Release](https://img.shields.io/github/v/release/xCaptaiN09/gitfox) ![License](https://img.shields.io/github/license/xCaptaiN09/gitfox) ![Tests](https://img.shields.io/badge/tests-35%2F35-brightgreen)
+[![Release](https://img.shields.io/github/v/release/xCaptaiN09/gitfox)](https://github.com/xCaptaiN09/gitfox/releases) ![License](https://img.shields.io/github/license/xCaptaiN09/gitfox) ![Tests](https://img.shields.io/badge/tests-45%2F45-brightgreen) [![GitHub Marketplace](https://img.shields.io/badge/GitHub_Marketplace-gitfox--ai-orange)](https://github.com/marketplace/actions/gitfox-ai)
 
 **Private AI code review & issue triage for GitHub — powered by a local Ollama model.**
 
 Your code never leaves the runner. No API keys. No cloud LLM. Free forever.
+
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/13b3e9c4-c586-4c69-a1b8-624c993c8f7d" controls="controls" width="720"></video>
+  <p><sub>▶️ <em>Watch the 18-second overview — your code never leaves the runner · <a href="https://github.com/xCaptaiN09/gitfox/blob/main/.github/assets/demo.mp4">Open full video</a></em></sub></p>
+</div>
 
 ## Features
 
@@ -39,6 +44,11 @@ on:
   issue_comment:
     types: [created]
   workflow_dispatch:
+    inputs:
+      scan_all:
+        description: 'Catch-up: scan all open PRs and issues'
+        type: boolean
+        default: false
 
 jobs:
   gitfox:
@@ -69,8 +79,9 @@ Comment `/gitfox` or `@gitfox` on any PR or issue and gitfox will re-run its rev
 
 Nothing to do — on its **first run in a repo** (no gitfox replies yet), gitfox automatically
 catches up: it reviews every currently open PR and triages every open issue, one by one
-(safety-capped by `max-scan-items`). You can also trigger this any time via a manual
-`workflow_dispatch` of the gitfox workflow.
+(safety-capped by `max-scan-items`). You can also trigger this any time: **Actions → gitfox →
+Run workflow** — any manual dispatch runs the full catch-up sweep (the `scan_all` toggle is
+accepted for clarity; a bare `workflow_dispatch:` behaves the same).
 
 ## Inputs
 
@@ -158,6 +169,9 @@ No code is sent to OpenAI, Anthropic, or any other cloud service.
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| **v1.4.3** | 2026-09-07 | Reaction cleanup completed: removes ALL orphan 🚀 per item (older versions left ghosts), dedup-skipped items in catch-up sweeps get stale rockets cleared too |
+| **v1.4.2** | 2026-09-07 | Reaction lifecycle: 🚀 is now transient — cleared on both success (only 👍 remains) and failure, so no more stale "in progress" markers; includes v1.4.1's NDJSON streaming fix for the 5-minute review timeout |
+| **v1.4.1** | 2026-09-07 | Reliability: Ollama calls now stream (NDJSON), eliminating undici's 5-minute header timeout that silently killed long reviews; failed reviews/triage clean up their 🚀 reaction instead of leaving a stuck "in progress" marker |
 | **v1.4.0** | 2026-09-05 | First-setup catch-up: new installs auto-scan all open PRs/issues one by one (also on any manual `workflow_dispatch`), repo context now powers issue triage too (README + file tree + related files) |
 | **v1.3.1** | 2026-09-05 | Marketplace-ready metadata: action name `gitfox-ai`, description under 125 chars (no code changes) |
 | **v1.3.0** | 2026-09-04 | GitHub App identity: pass `app-id` + `private-key` and every reply posts as your app bot (`gitfox[bot]`) with its avatar — token still works as before |
